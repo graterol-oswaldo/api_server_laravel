@@ -1,0 +1,50 @@
+version: "3.8"
+
+services:
+  site:
+    build: ./httpd/
+    container_name: laravel_api_mv
+    ports:
+      - "${HTTP_PORT}:80"
+    environment:
+      VIRTUALHOST: ${VIRTUALHOST}
+    volumes:
+      - "./httpd/src:/var/www/html"
+    networks:
+      - net_mv_web
+      - net_mv_postgres
+
+  pgsql:
+    container_name: postgresql_mv
+    image: postgres:13
+    ports:
+      - "${POSTGRES_PORT}:5432"
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - "./postgresql:/var/lib/postgresql/data"
+    networks:
+      - net_mv_postgres
+
+#  pgadmin:
+#    container_name: pgadmin_mv
+#    image: dpage/pgadmin4:latest
+#    depends_on:
+#      - pgsql
+#    environment:
+#      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+#      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+#    volumes:
+#      - "./pgadmin:/root/.pgadmin"
+#    ports:
+#      - "${PGADMIN_PORT}:80"
+#    networks:
+#      - net_mv_postgres
+
+networks:
+  net_mv_web:
+    external: true
+  net_mv_postgres:
+    external: true
